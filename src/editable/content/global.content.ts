@@ -1,47 +1,80 @@
 import { slot4BrandConfig } from '@/editable/theme/brand.config'
 
+/*
+  Display labels for the two enabled tasks:
+  - listing → "Local Directory"
+  - pdf     → "Reference Library"
+  These strings are the only user-visible names used across the shell and pages.
+*/
+export const TASK_DISPLAY = {
+  listing: {
+    singular: 'Directory listing',
+    plural: 'Local Directory',
+    verb: 'Browse the directory',
+    empty: 'No places have been added to the directory yet.',
+  },
+  pdf: {
+    singular: 'Reference',
+    plural: 'Reference Library',
+    verb: 'Open the library',
+    empty: 'No references have been published yet.',
+  },
+} as const
+
 export const globalContent = {
   site: {
     name: slot4BrandConfig.siteName,
-    tagline: slot4BrandConfig.tagline || 'Independent reading platform',
+    tagline: slot4BrandConfig.tagline || 'A connected directory and reference platform',
     domain: slot4BrandConfig.domain,
     baseUrl: slot4BrandConfig.baseUrl,
   },
   nav: {
-    tagline: 'Independent reading platform',
+    tagline: 'Systems for local discovery',
     primaryLinks: [
-      { label: 'Articles', href: '/articles' },
-      { label: 'Visuals', href: '/image-sharing' },
-      { label: 'Listings', href: '/listings' },
+      { label: 'About', href: '/about' },
       { label: 'Contact', href: '/contact' },
     ],
     actions: {
-      primary: { label: 'Start exploring', href: '/' },
-      secondary: { label: 'Submit', href: '/contact' },
+      primary: { label: 'Get started', href: '/signup' },
+      secondary: { label: 'Sign in', href: '/login' },
     },
   },
   footer: {
-    tagline: 'Stories, resources, and discoverable posts',
-    description: 'A connected publishing surface for articles, visuals, listings, profiles, bookmarks, and downloadable resources.',
+    tagline: 'Directory + Reference Library',
+    description:
+      'One connected surface for verified local places and the reference material that supports them — mapped, searchable and free to explore.',
+    ctaStrip: {
+      eyebrow: 'Ready when you are',
+      title: 'Build with the directory. Ship with the library.',
+      primary: { label: 'Get started', href: '/signup' },
+      secondary: { label: 'Contact us', href: '/contact' },
+    },
     columns: [
       {
-        title: 'Explore',
+        title: 'Discovery',
         links: [
-          { label: 'Articles', href: '/articles' },
-          { label: 'Listings', href: '/listings' },
-          { label: 'Images', href: '/image-sharing' },
-          { label: 'PDF Library', href: '/pdf' },
+          { label: TASK_DISPLAY.listing.plural, href: '/listings' },
+          { label: TASK_DISPLAY.pdf.plural, href: '/pdf' },
+          { label: 'Search', href: '/search' },
         ],
       },
       {
-        title: 'Site',
+        title: 'Resources',
         links: [
           { label: 'About', href: '/about' },
           { label: 'Contact', href: '/contact' },
         ],
       },
+      {
+        title: 'Account',
+        links: [
+          { label: 'Sign in', href: '/login' },
+          { label: 'Get started', href: '/signup' },
+          { label: 'Submit', href: '/create' },
+        ],
+      },
     ],
-    bottomNote: 'Built for clean discovery and connected publishing.',
+    bottomNote: 'Independent. Verified. Built to be linked.',
   },
   commonLabels: {
     readMore: 'Read more',

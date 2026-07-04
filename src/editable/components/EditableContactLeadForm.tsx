@@ -1,9 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle2, Loader2 } from 'lucide-react'
+import { CheckCircle2, Loader2, Send } from 'lucide-react'
+import { editableDesignContract as dc } from '@/editable/layouts/design-contract'
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
+
+const inputClass =
+  'w-full rounded-[12px] border border-white/10 bg-white/[0.03] px-4 py-3 text-[15px] text-white outline-none transition duration-300 placeholder:text-[var(--slot4-soft-muted-text)] focus:border-[var(--slot4-accent-soft)]'
 
 export function EditableContactLeadForm() {
   const [status, setStatus] = useState<FormStatus>('idle')
@@ -34,28 +38,34 @@ export function EditableContactLeadForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 rounded-sm border border-[var(--editable-border)] bg-[var(--slot4-panel-bg)] p-6 md:p-8">
+    <form onSubmit={handleSubmit} className="grid gap-4">
       <div className="grid gap-4 md:grid-cols-2">
         <Field name="name" label="Full name" placeholder="Your name" required />
-        <Field name="email" type="email" label="Email address" placeholder="you@example.com" required />
+        <Field name="email" type="email" label="Email" placeholder="you@example.com" required />
       </div>
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <Field name="phone" label="Phone number" placeholder="Optional" />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field name="phone" label="Phone" placeholder="Optional" />
         <Field name="subject" label="Subject" placeholder="How can we help?" />
       </div>
-      <label className="mt-4 grid gap-2 text-sm font-semibold text-[var(--slot4-muted-text)]">
-        Message
+      <label className="grid gap-2">
+        <span className="editable-eyebrow text-[10px] text-[var(--slot4-accent-soft)]">Message</span>
         <textarea
           name="message"
           required
           rows={6}
-          placeholder="Tell us what you need help with..."
-          className="rounded-sm border border-[var(--editable-border)] bg-[var(--slot4-surface-bg)] px-4 py-3 text-base font-medium text-[var(--slot4-page-text)] outline-none transition placeholder:text-[var(--slot4-soft-muted-text)] focus:border-[var(--slot4-accent)]"
+          placeholder="Tell us what you would like to add, correct, or suggest…"
+          className={inputClass}
         />
       </label>
       <input name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
       {message ? (
-        <div className={`mt-5 flex items-start gap-3 rounded-sm px-4 py-3 text-sm font-semibold ${status === 'success' ? 'bg-emerald-950/40 text-emerald-300' : 'bg-red-950/40 text-red-300'}`}>
+        <div
+          className={`flex items-start gap-2 rounded-[12px] px-4 py-3 text-sm ring-1 ring-inset ${
+            status === 'success'
+              ? 'bg-[color-mix(in_oklab,var(--slot4-accent-soft)_18%,transparent)] text-white ring-[color-mix(in_oklab,var(--slot4-accent-soft)_40%,transparent)]'
+              : 'bg-red-950/40 text-red-300 ring-red-900/60'
+          }`}
+        >
           {status === 'success' ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : null}
           <span>{message}</span>
         </div>
@@ -63,25 +73,37 @@ export function EditableContactLeadForm() {
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--slot4-accent-fill)] px-6 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--slot4-on-accent)] shadow-[0_8px_24px_rgba(79,70,229,0.28)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+        className={`${dc.button.primary} w-full disabled:cursor-not-allowed disabled:opacity-70`}
       >
-        {status === 'submitting' ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+        {status === 'submitting' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         Send message
       </button>
     </form>
   )
 }
 
-function Field({ name, label, type = 'text', placeholder, required = false }: { name: string; label: string; type?: string; placeholder?: string; required?: boolean }) {
+function Field({
+  name,
+  label,
+  type = 'text',
+  placeholder,
+  required = false,
+}: {
+  name: string
+  label: string
+  type?: string
+  placeholder?: string
+  required?: boolean
+}) {
   return (
-    <label className="grid gap-2 text-sm font-semibold text-[var(--slot4-muted-text)]">
-      {label}
+    <label className="grid gap-2">
+      <span className="editable-eyebrow text-[10px] text-[var(--slot4-accent-soft)]">{label}</span>
       <input
         name={name}
         type={type}
         required={required}
         placeholder={placeholder}
-        className="h-12 rounded-sm border border-[var(--editable-border)] bg-[var(--slot4-surface-bg)] px-4 text-base font-medium text-[var(--slot4-page-text)] outline-none transition placeholder:text-[var(--slot4-soft-muted-text)] focus:border-[var(--slot4-accent)]"
+        className={inputClass}
       />
     </label>
   )
