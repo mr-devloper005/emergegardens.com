@@ -60,6 +60,9 @@ const getField = (post: SitePost, keys: string[]) => {
   return ''
 }
 
+const dedupeUrls = (urls: Array<string | null | undefined>): string[] =>
+  Array.from(new Set(urls.map((url) => (typeof url === 'string' ? url.trim() : '')).filter((url) => url.length > 0)))
+
 const getImages = (post: SitePost) => {
   const c = getContent(post)
   const media = Array.isArray(post.media)
@@ -71,7 +74,7 @@ const getImages = (post: SitePost) => {
   const singles = ['image', 'featuredImage', 'thumbnail', 'logo', 'avatar']
     .map((k) => asText(c[k]))
     .filter((u) => u && isUrl(u))
-  return [...media, ...images, ...singles].filter(Boolean).slice(0, 12)
+  return dedupeUrls([...media, ...images, ...singles]).filter(Boolean).slice(0, 12)
 }
 
 const getBody = (post: SitePost) => {
@@ -127,11 +130,14 @@ const formatPlainText = (raw: string) => {
 const summaryText = (post: SitePost) =>
   post.summary || asText(getContent(post).description) || asText(getContent(post).excerpt) || ''
 const stripHtml = (v: string) => v.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+const comparableText = (value: string) => stripHtml(value).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
+
 const leadText = (post: SitePost) => {
   const s = summaryText(post)
   if (!s) return ''
   const lead = stripHtml(s)
-  return lead && lead !== stripHtml(getBody(post)) ? lead : ''
+  const leadKey = comparableText(lead)
+  return leadKey && comparableText(getBody(post)).includes(leadKey) ? '' : lead
 }
 const categoryOf = (post: SitePost, fallback: string) =>
   asText(getContent(post).category) || post.tags?.[0] || fallback
