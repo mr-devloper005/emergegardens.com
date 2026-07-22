@@ -674,84 +674,26 @@ function BookmarkDetail({ post, related }: { post: SitePost; related: SitePost[]
 }
 
 /* ================================================================== */
-/* PDF — new numbered-section layout, document workspace              */
+/* PDF — simple layout: PDF as head component, minimal content below   */
 /* ================================================================== */
 function PdfDetail({ post, related }: { post: SitePost; related: SitePost[] }) {
   const fileUrl = getField(post, ['fileUrl', 'pdfUrl', 'documentUrl', 'url'])
-  const category = categoryOf(post, TASK_DISPLAY.pdf.singular)
-  const pages = getField(post, ['pages', 'pageCount']) || '—'
-  const fileSize = getField(post, ['fileSize', 'size']) || '—'
-  const format = 'PDF'
-  const author = getField(post, ['author', 'contributor', 'uploader']) || SITE_CONFIG.name
   const fileName = getField(post, ['filename', 'name']) || `${post.slug || 'document'}.pdf`
-  const tags = Array.isArray(post.tags) ? post.tags.slice(0, 8) : []
-  const lead = leadText(post)
-  const insideList = tags.length
-    ? tags.map((t) => `${t.charAt(0).toUpperCase()}${t.slice(1)}`).slice(0, 6)
-    : ['Overview', 'Context', 'Key findings', 'References', 'Appendix']
 
   return (
     <>
-      {/* Slim command bar */}
-      <div className={`${dc.shell.section} flex flex-wrap items-center gap-3 pt-10`}>
+      {/* Slim top strip */}
+      <div className={`${dc.shell.section} flex flex-wrap items-center gap-3 pt-8`}>
         <BackLink task="pdf" />
-        <span className="hidden text-white/20 sm:inline">/</span>
-        <span className={dc.badge.accentPill}>{format}</span>
-        <span className={dc.badge.pill}>{category}</span>
       </div>
 
-      {/* Document identity band */}
-      <div className={`${dc.shell.section} mt-8`}>
-        <div className={`${dc.surface.card} grid items-center gap-8 p-6 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:p-8`}>
-          <div className="editable-display flex h-24 w-24 shrink-0 items-center justify-center rounded-[18px] bg-[color-mix(in_oklab,var(--slot4-accent)_18%,transparent)] text-[38px] font-medium tracking-[-0.02em] text-[var(--slot4-accent-soft)] ring-1 ring-inset ring-[color-mix(in_oklab,var(--slot4-accent)_36%,transparent)]">
-            PDF
-          </div>
-          <div className="min-w-0">
-            <p className="editable-eyebrow text-[10px] text-[var(--slot4-accent-soft)]">
-              {TASK_DISPLAY.pdf.singular}
-            </p>
-            <p className="mt-2 truncate editable-mono text-[11px] text-[var(--slot4-muted-text)]">
-              {fileName}
-            </p>
-            <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-[var(--slot4-muted-text)]">
-              <span>Pages · <span className="text-white">{pages}</span></span>
-              <span>Size · <span className="text-white">{fileSize}</span></span>
-              <span>Format · <span className="text-white">{format}</span></span>
-              <span>By · <span className="text-white">{author}</span></span>
-            </div>
-          </div>
-          {fileUrl ? (
-            <div className="flex flex-wrap items-center gap-3">
-              <Link href={fileUrl} target="_blank" rel="noreferrer" className={dc.button.primary}>
-                Download PDF <Download className="h-4 w-4" />
-              </Link>
-              <Link href={fileUrl} target="_blank" rel="noreferrer" className={dc.button.secondary}>
-                Open in new tab <ExternalLink className="h-4 w-4" />
-              </Link>
-            </div>
-          ) : null}
-        </div>
-      </div>
-
-      {/* Huge title as visual centerpiece */}
-      <div className={`${dc.shell.section} pt-16`}>
-        <h1 className="editable-display max-w-6xl text-[clamp(3rem,7vw+1rem,7.25rem)] font-medium leading-[0.98] tracking-[-0.035em] text-white">
-          {post.title}
-        </h1>
-        {lead ? (
-          <p className="editable-display mt-12 max-w-4xl border-l-[3px] border-[var(--slot4-accent-soft)] pl-6 text-[clamp(1.2rem,1.1vw+0.9rem,1.6rem)] font-normal leading-[1.5] tracking-[-0.01em] text-white/85">
-            {lead}
-          </p>
-        ) : null}
-      </div>
-
-      {/* Full-width iframe preview */}
-      <div className={`${dc.shell.section} mt-16`}>
+      {/* PDF as head component — shown first, full width */}
+      <div className={`${dc.shell.section} mt-6`}>
         {fileUrl ? (
-          <div className="overflow-hidden rounded-[24px] ring-1 ring-inset ring-white/10">
-            <div className="flex items-center justify-between gap-3 bg-white/[0.03] px-5 py-4">
+          <div className="overflow-hidden rounded-[20px] ring-1 ring-inset ring-white/10">
+            <div className="flex items-center justify-between gap-3 bg-white/[0.03] px-5 py-3">
               <span className="editable-eyebrow text-[10px] text-[var(--slot4-accent-soft)]">
-                Reference preview
+                PDF preview
               </span>
               <span className="editable-mono text-[10px] text-[var(--slot4-muted-text)]">{fileName}</span>
             </div>
@@ -762,7 +704,7 @@ function PdfDetail({ post, related }: { post: SitePost; related: SitePost[] }) {
             />
           </div>
         ) : (
-          <div className="flex h-[60vh] items-center justify-center rounded-[24px] bg-white/[0.02] ring-1 ring-inset ring-white/10">
+          <div className="flex h-[60vh] items-center justify-center rounded-[20px] bg-white/[0.02] ring-1 ring-inset ring-white/10">
             <div className="text-center">
               <FileText className="mx-auto h-10 w-10 text-[var(--slot4-muted-text)]" />
               <p className="mt-4 text-[var(--slot4-muted-text)]">The file will appear here once uploaded.</p>
@@ -771,98 +713,22 @@ function PdfDetail({ post, related }: { post: SitePost; related: SitePost[] }) {
         )}
       </div>
 
-      {/* Numbered sections */}
-      <div className={`${dc.shell.section} pb-16 pt-6`}>
-        <NumberedSection index={1} label="Overview" title="What this reference covers.">
-          <BodyContent post={post} />
-          {tags.length ? (
-            <div className="mt-8 flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span key={tag} className={dc.badge.tag}>
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          ) : null}
-        </NumberedSection>
-
-        <NumberedSection index={2} label="Metadata" title="File details.">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              ['Category', category],
-              ['Pages', pages],
-              ['File size', fileSize],
-              ['Format', format],
-              ['Contributor', author],
-              ['File name', fileName],
-            ].map(([k, v]) => (
-              <div key={k} className={`${dc.surface.soft} p-5`}>
-                <p className="editable-eyebrow text-[10px] text-[var(--slot4-accent-soft)]">{k}</p>
-                <p className="mt-3 truncate text-[15px] font-medium text-white">{v}</p>
-              </div>
-            ))}
+      {/* Title + download actions below the PDF */}
+      <div className={`${dc.shell.section} mt-10 pb-16`}>
+        <h1 className="editable-display max-w-4xl text-[clamp(1.8rem,3vw+0.8rem,3rem)] font-medium leading-[1.1] tracking-[-0.02em] text-white">
+          {post.title}
+        </h1>
+        {fileUrl ? (
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link href={fileUrl} target="_blank" rel="noreferrer" className={dc.button.primary}>
+              Download PDF <Download className="h-4 w-4" />
+            </Link>
+            <Link href={fileUrl} target="_blank" rel="noreferrer" className={dc.button.secondary}>
+              Open in new tab <ExternalLink className="h-4 w-4" />
+            </Link>
           </div>
-        </NumberedSection>
-
-        <NumberedSection index={3} label="Contents" title="What's inside.">
-          <ol className="grid gap-3 sm:grid-cols-2">
-            {insideList.map((line, i) => (
-              <li
-                key={line}
-                className={`${dc.surface.soft} flex items-start gap-4 p-5`}
-              >
-                <span className="editable-mono text-[13px] leading-none text-[var(--slot4-accent-soft)]">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <span className="text-[14px] text-white/90">{line}</span>
-              </li>
-            ))}
-          </ol>
-        </NumberedSection>
-
-        <NumberedSection index={4} label="Download" title="Take it with you.">
-          {fileUrl ? (
-            <div className={`${dc.surface.dark} flex flex-col items-start gap-6 px-8 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-10`}>
-              <div>
-                <p className="editable-eyebrow text-[10px] text-[var(--slot4-accent-soft)]">Ready to download</p>
-                <p className="editable-display mt-3 text-[22px] font-medium tracking-[-0.02em] text-white">
-                  {fileName}
-                </p>
-                <p className="mt-2 text-sm text-[var(--slot4-muted-text)]">
-                  {pages} pages · {fileSize} · {format}
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <Link href={fileUrl} target="_blank" rel="noreferrer" className={dc.button.primary}>
-                  Download PDF <Download className="h-4 w-4" />
-                </Link>
-                <Link href={fileUrl} target="_blank" rel="noreferrer" className={dc.button.secondary}>
-                  Open in new tab <ExternalLink className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <p className={dc.type.body}>The download will appear here once the file is uploaded.</p>
-          )}
-        </NumberedSection>
-
-        <NumberedSection index={5} label="Sponsored" title="Related placement.">
-          <Ads
-            slot="article-bottom"
-            size={pickRandom(getSlotSizes('article-bottom'))}
-            showLabel
-            className="mx-auto w-full"
-          />
-        </NumberedSection>
+        ) : null}
       </div>
-
-      {/* Floating action dock for PDF */}
-      <ActionDock
-        actions={[
-          fileUrl ? { icon: Download, label: 'Download', href: fileUrl, external: true } : null,
-          fileUrl ? { icon: ExternalLink, label: 'Open', href: fileUrl, external: true } : null,
-        ]}
-      />
 
       <PdfRelatedStrip related={related} />
     </>
